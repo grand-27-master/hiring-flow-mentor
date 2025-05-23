@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { search, calendar, user } from "lucide-react";
+import { Search, Calendar, User } from "lucide-react";
 
 interface MemoryEntry {
   id: string;
@@ -94,11 +93,11 @@ export const MemoryBank = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "conversation": return user;
-      case "decision": return calendar;
-      case "insight": return search;
-      case "process": return user;
-      default: return user;
+      case "conversation": return User;
+      case "decision": return Calendar;
+      case "insight": return Search;
+      case "process": return User;
+      default: return User;
     }
   };
 

@@ -12,7 +12,7 @@ import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { HiringPipeline } from "@/components/HiringPipeline";
 import { ToolsPanel } from "@/components/ToolsPanel";
 import { MemoryBank } from "@/components/MemoryBank";
-import { users, search, calendar, file, check } from "lucide-react";
+import { Users, Search, Calendar, File, Check } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("chat");
@@ -25,7 +25,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <users className="w-6 h-6" />
+                <Users className="w-6 h-6" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold">AI HR Assistant</h1>
@@ -49,23 +49,23 @@ const Index = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 bg-white shadow-md">
             <TabsTrigger value="chat" className="flex items-center space-x-2">
-              <users className="w-4 h-4" />
+              <Users className="w-4 h-4" />
               <span>AI Chat</span>
             </TabsTrigger>
             <TabsTrigger value="pipeline" className="flex items-center space-x-2">
-              <file className="w-4 h-4" />
+              <File className="w-4 h-4" />
               <span>Pipeline</span>
             </TabsTrigger>
             <TabsTrigger value="tools" className="flex items-center space-x-2">
-              <search className="w-4 h-4" />
+              <Search className="w-4 h-4" />
               <span>Tools</span>
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center space-x-2">
-              <calendar className="w-4 h-4" />
+              <Calendar className="w-4 h-4" />
               <span>Analytics</span>
             </TabsTrigger>
             <TabsTrigger value="memory" className="flex items-center space-x-2">
-              <check className="w-4 h-4" />
+              <Check className="w-4 h-4" />
               <span>Memory</span>
             </TabsTrigger>
           </TabsList>

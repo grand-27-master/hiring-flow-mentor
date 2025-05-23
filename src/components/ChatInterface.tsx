@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { AIAgent } from "@/lib/aiAgent";
-import { user, users } from "lucide-react";
+import { User, Users } from "lucide-react";
 
 interface Message {
   id: string;
@@ -100,7 +99,7 @@ export const ChatInterface = () => {
     <Card className="h-[600px] flex flex-col shadow-lg">
       <CardHeader className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-t-lg">
         <CardTitle className="flex items-center space-x-2">
-          <users className="w-5 h-5" />
+          <Users className="w-5 h-5" />
           <span>AI Agent Conversation</span>
         </CardTitle>
         <CardDescription className="text-purple-100">
@@ -116,9 +115,9 @@ export const ChatInterface = () => {
                 <div className={`max-w-[80%] ${message.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-100"} rounded-lg p-4`}>
                   <div className="flex items-center space-x-2 mb-2">
                     {message.sender === "user" ? (
-                      <user className="w-4 h-4" />
+                      <User className="w-4 h-4" />
                     ) : (
-                      <users className="w-4 h-4" />
+                      <Users className="w-4 h-4" />
                     )}
                     <span className="font-medium">
                       {message.sender === "user" ? "You" : "AI Agent"}

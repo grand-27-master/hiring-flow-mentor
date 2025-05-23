@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { search, calendar, user, file, check } from "lucide-react";
+import { Search, Calendar, User, File, Check } from "lucide-react";
 
 interface Tool {
   id: string;
@@ -23,7 +22,7 @@ const tools: Tool[] = [
     id: "candidate-screening",
     name: "AI Candidate Screening",
     description: "Automatically analyze resumes and rank candidates based on job requirements",
-    icon: user,
+    icon: User,
     category: "Screening",
     status: "active",
     lastUsed: "2 hours ago"
@@ -32,7 +31,7 @@ const tools: Tool[] = [
     id: "market-analysis",
     name: "Market Intelligence",
     description: "Get real-time salary data, competition analysis, and hiring trends",
-    icon: search,
+    icon: Search,
     category: "Research",
     status: "active",
     lastUsed: "1 day ago"
@@ -41,7 +40,7 @@ const tools: Tool[] = [
     id: "interview-scheduler",
     name: "Smart Scheduler",
     description: "Coordinate interviews across multiple stakeholders with AI optimization",
-    icon: calendar,
+    icon: Calendar,
     category: "Coordination",
     status: "active",
     lastUsed: "3 hours ago"
@@ -50,7 +49,7 @@ const tools: Tool[] = [
     id: "budget-planner",
     name: "Budget Optimizer",
     description: "Calculate hiring costs and optimize budget allocation across roles",
-    icon: file,
+    icon: File,
     category: "Planning",
     status: "active",
     lastUsed: "1 week ago"
@@ -59,7 +58,7 @@ const tools: Tool[] = [
     id: "compliance-checker",
     name: "Compliance Monitor",
     description: "Ensure hiring processes meet diversity and legal requirements",
-    icon: check,
+    icon: Check,
     category: "Compliance",
     status: "active",
     lastUsed: "5 days ago"
