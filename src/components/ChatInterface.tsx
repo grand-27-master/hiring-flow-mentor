@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,8 @@ export const ChatInterface = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const aiAgent = new AIAgent();
+  // Memoize the AI agent to prevent re-instantiation on every render
+  const aiAgent = useMemo(() => new AIAgent(), []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -39,23 +40,25 @@ export const ChatInterface = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: input,
+      content: input.trim(),
       sender: "user",
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input.trim();
     setInput("");
     setIsLoading(true);
 
     try {
-      console.log("Processing user message:", input);
+      console.log("Processing user message:", currentInput);
       
-      const response = await aiAgent.processMessage(input);
+      const response = await aiAgent.processMessage(currentInput);
+      console.log("AI response received:", response);
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -72,6 +75,17 @@ export const ChatInterface = () => {
       });
     } catch (error) {
       console.error("Error processing message:", error);
+      
+      // Add error message to chat
+      const errorMessage: Message = {
+        id: (Date.now() + 2).toString(),
+        content: "I apologize, but I encountered an error processing your message. Please try again.",
+        sender: "ai",
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+      
       toast({
         title: "Error",
         description: "Failed to process your message. Please try again.",
