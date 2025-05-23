@@ -10,9 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChatInterface } from "@/components/ChatInterface";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { HiringPipeline } from "@/components/HiringPipeline";
-import { ToolsPanel } from "@/components/ToolsPanel";
-import { MemoryBank } from "@/components/MemoryBank";
-import { Users, Search, Calendar, File, Check } from "lucide-react";
+import { Users, Calendar, File } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("chat");
@@ -47,7 +45,7 @@ const Index = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-white shadow-md">
+          <TabsList className="grid w-full grid-cols-3 bg-white shadow-md">
             <TabsTrigger value="chat" className="flex items-center space-x-2">
               <Users className="w-4 h-4" />
               <span>AI Chat</span>
@@ -56,17 +54,9 @@ const Index = () => {
               <File className="w-4 h-4" />
               <span>Pipeline</span>
             </TabsTrigger>
-            <TabsTrigger value="tools" className="flex items-center space-x-2">
-              <Search className="w-4 h-4" />
-              <span>Tools</span>
-            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center space-x-2">
               <Calendar className="w-4 h-4" />
               <span>Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="memory" className="flex items-center space-x-2">
-              <Check className="w-4 h-4" />
-              <span>Memory</span>
             </TabsTrigger>
           </TabsList>
 
@@ -78,16 +68,8 @@ const Index = () => {
             <HiringPipeline />
           </TabsContent>
 
-          <TabsContent value="tools">
-            <ToolsPanel />
-          </TabsContent>
-
           <TabsContent value="analytics">
             <AnalyticsDashboard />
-          </TabsContent>
-
-          <TabsContent value="memory">
-            <MemoryBank />
           </TabsContent>
         </Tabs>
       </div>

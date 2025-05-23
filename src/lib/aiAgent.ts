@@ -6,224 +6,173 @@ interface AIResponse {
 }
 
 export class AIAgent {
-  private memory: Map<string, any> = new Map();
-  private conversationHistory: Array<{role: string, content: string}> = [];
-
-  // Simulated AI function calling tools
-  private tools = {
-    candidateScreening: (criteria: any) => {
-      console.log("Tool: Candidate Screening executed with criteria:", criteria);
-      return {
-        recommendedCandidates: Math.floor(Math.random() * 10) + 5,
-        topSkills: ["JavaScript", "React", "Python", "Communication"],
-        averageExperience: "3-5 years"
-      };
-    },
-
-    marketAnalysis: (role: string, location: string) => {
-      console.log("Tool: Market Analysis executed for:", role, "in", location);
-      return {
-        averageSalary: "$" + (Math.floor(Math.random() * 50000) + 70000).toLocaleString(),
-        competitionLevel: ["Low", "Medium", "High"][Math.floor(Math.random() * 3)],
-        timeToHire: Math.floor(Math.random() * 30) + 15 + " days"
-      };
-    },
-
-    interviewScheduling: (candidates: number, interviewers: number) => {
-      console.log("Tool: Interview Scheduling executed");
-      return {
-        suggestedSlots: Math.floor(Math.random() * 20) + 10,
-        estimatedDuration: "2-3 weeks",
-        recommendedFormat: "Hybrid (Technical + Behavioral)"
-      };
-    },
-
-    budgetPlanning: (role: string, headcount: number) => {
-      console.log("Tool: Budget Planning executed");
-      const baseSalary = Math.floor(Math.random() * 40000) + 60000;
-      return {
-        totalBudget: "$" + (baseSalary * headcount * 1.3).toLocaleString(),
-        recruitmentCost: "$" + (baseSalary * 0.15).toLocaleString(),
-        onboardingCost: "$" + (5000 * headcount).toLocaleString()
-      };
-    },
-
-    complianceCheck: (requirements: any) => {
-      console.log("Tool: Compliance Check executed");
-      return {
-        eeoCompliance: "Passed",
-        diversityScore: Math.floor(Math.random() * 30) + 70 + "%",
-        recommendations: ["Include diverse interview panels", "Use structured interviews"]
-      };
-    }
-  };
-
   async processMessage(message: string): Promise<AIResponse> {
-    // Add to conversation history
-    this.conversationHistory.push({ role: "user", content: message });
-
-    // Simulate multi-step reasoning
-    const reasoning = this.analyzeMessage(message);
-    const toolsToUse = this.selectTools(message);
-    const toolResults = this.executeTools(toolsToUse, message);
-    const response = this.generateResponse(message, toolResults, reasoning);
-
-    // Store in memory
-    this.memory.set(`conversation_${Date.now()}`, {
-      userMessage: message,
-      aiResponse: response,
-      toolsUsed: toolsToUse,
-      timestamp: new Date()
-    });
-
-    console.log("AI Agent Memory Updated:", this.memory.size, "entries");
-
+    console.log("Processing user message:", message);
+    
+    // Generate direct response based on the message
+    const response = this.generateDirectResponse(message);
+    
     return {
       content: response,
-      toolsUsed: toolsToUse,
-      reasoning: reasoning
+      toolsUsed: [],
+      reasoning: []
     };
   }
 
-  private analyzeMessage(message: string): string[] {
-    const reasoning: string[] = [];
+  private generateDirectResponse(message: string): string {
     const lowerMessage = message.toLowerCase();
-
-    reasoning.push("Analyzing user intent and context");
-
+    
+    // Hiring strategy responses
     if (lowerMessage.includes("hire") || lowerMessage.includes("recruit")) {
-      reasoning.push("Detected hiring/recruitment intent");
+      return `I can help you with hiring! Here are some key strategies:
+
+🎯 **Hiring Process Steps:**
+1. Define clear job requirements and must-have skills
+2. Choose the right sourcing channels (LinkedIn, Indeed, referrals)
+3. Screen candidates efficiently with structured interviews
+4. Check references and conduct background checks
+5. Make competitive offers quickly
+
+💡 **Best Practices:**
+- Write compelling job descriptions that attract top talent
+- Use a consistent interview process for fair evaluation
+- Focus on cultural fit alongside technical skills
+- Provide a great candidate experience throughout
+
+Would you like me to elaborate on any specific aspect of the hiring process?`;
     }
 
-    if (lowerMessage.includes("budget") || lowerMessage.includes("cost")) {
-      reasoning.push("Financial planning component identified");
-    }
-
-    if (lowerMessage.includes("interview") || lowerMessage.includes("schedule")) {
-      reasoning.push("Interview coordination requirements detected");
-    }
-
-    if (lowerMessage.includes("candidate") || lowerMessage.includes("applicant")) {
-      reasoning.push("Candidate management focus identified");
-    }
-
-    reasoning.push("Selecting appropriate tools for comprehensive analysis");
-    reasoning.push("Preparing response with actionable insights");
-
-    return reasoning;
-  }
-
-  private selectTools(message: string): string[] {
-    const tools: string[] = [];
-    const lowerMessage = message.toLowerCase();
-
+    // Candidate screening responses
     if (lowerMessage.includes("candidate") || lowerMessage.includes("screen")) {
-      tools.push("candidateScreening");
+      return `For effective candidate screening:
+
+📋 **Resume Review:**
+- Look for relevant experience and skill matches
+- Check for career progression and stability
+- Note any gaps or red flags that need clarification
+
+💬 **Phone/Video Screening:**
+- Verify basic qualifications and interest level
+- Assess communication skills and cultural fit
+- Discuss salary expectations and availability
+
+🎯 **Key Questions to Ask:**
+- Why are you interested in this role/company?
+- Walk me through your relevant experience
+- What are your salary expectations?
+- When could you start?
+
+Would you like specific screening questions for a particular role?`;
     }
 
-    if (lowerMessage.includes("market") || lowerMessage.includes("salary") || lowerMessage.includes("competitive")) {
-      tools.push("marketAnalysis");
+    // Interview process responses
+    if (lowerMessage.includes("interview")) {
+      return `Here's how to structure an effective interview process:
+
+🔄 **Multi-Stage Process:**
+1. **Phone Screen** (15-30 min) - Basic fit and interest
+2. **Technical Interview** (45-60 min) - Skills assessment
+3. **Behavioral Interview** (30-45 min) - Culture and soft skills
+4. **Final Round** (30 min) - Leadership/team meet
+
+⭐ **Interview Best Practices:**
+- Prepare structured questions in advance
+- Use the STAR method for behavioral questions
+- Take detailed notes during interviews
+- Involve multiple team members for different perspectives
+- Provide clear next steps and timeline
+
+🎯 **What to Evaluate:**
+- Technical competency for the role
+- Problem-solving approach
+- Communication and collaboration skills
+- Cultural alignment with company values
+
+Need help with specific interview questions for a role?`;
     }
 
-    if (lowerMessage.includes("interview") || lowerMessage.includes("schedule")) {
-      tools.push("interviewScheduling");
+    // Budget and compensation responses
+    if (lowerMessage.includes("budget") || lowerMessage.includes("salary") || lowerMessage.includes("compensation")) {
+      return `Here's guidance on hiring budgets and compensation:
+
+💰 **Salary Research:**
+- Use sites like Glassdoor, PayScale, and Levels.fyi
+- Consider local market rates vs. remote compensation
+- Factor in experience level and specialization
+- Include total compensation (salary + benefits + equity)
+
+📊 **Budget Planning:**
+- Recruitment costs (job postings, agency fees): 15-20% of salary
+- Onboarding and training costs: $3,000-$5,000 per hire
+- Time-to-productivity: 3-6 months depending on role
+- Include buffer for competitive counteroffers
+
+🎯 **Offer Strategy:**
+- Make competitive initial offers to reduce negotiation
+- Be transparent about total compensation package
+- Consider non-monetary benefits (flexible work, growth opportunities)
+- Have approval for 10-15% flexibility in negotiations
+
+What type of role are you budgeting for?`;
     }
 
-    if (lowerMessage.includes("budget") || lowerMessage.includes("cost")) {
-      tools.push("budgetPlanning");
+    // Market analysis responses
+    if (lowerMessage.includes("market") || lowerMessage.includes("competitive")) {
+      return `Here's how to analyze the current hiring market:
+
+📈 **Market Research:**
+- Check average time-to-fill for similar roles (typically 30-45 days)
+- Review competitor job postings for salary ranges and requirements
+- Monitor industry reports and salary surveys
+- Track application-to-hire ratios in your sector
+
+🎯 **Competitive Positioning:**
+- Highlight unique company benefits and culture
+- Offer competitive compensation packages
+- Emphasize growth and learning opportunities
+- Showcase interesting projects and technology
+
+⚡ **Current Market Trends:**
+- Remote work flexibility is highly valued
+- Candidates prioritize work-life balance
+- Skills-based hiring is increasingly important
+- Faster hiring processes win top talent
+
+🔍 **Red Flags in the Market:**
+- Very low application rates may indicate unrealistic requirements
+- High salary expectations might reflect market inflation
+- Long hiring processes lose candidates to competitors
+
+Which market segment or role type are you most interested in?`;
     }
 
-    if (lowerMessage.includes("compliance") || lowerMessage.includes("diversity")) {
-      tools.push("complianceCheck");
-    }
+    // General HR advice
+    return `I'm here to help with your hiring and HR needs! I can assist with:
 
-    // Default to at least one tool for comprehensive analysis
-    if (tools.length === 0) {
-      tools.push("candidateScreening", "marketAnalysis");
-    }
+🎯 **Hiring Strategy & Planning**
+- Job description writing and role definition
+- Sourcing strategy and channel selection
+- Interview process design
+- Offer strategy and negotiation
 
-    return tools;
-  }
+👥 **Candidate Management**
+- Resume screening and evaluation
+- Interview question preparation
+- Reference checking best practices
+- Candidate experience optimization
 
-  private executeTools(toolNames: string[], message: string): any {
-    const results: any = {};
+💼 **HR Operations**
+- Onboarding process design
+- Compensation benchmarking
+- Diversity and inclusion strategies
+- Compliance considerations
 
-    toolNames.forEach(toolName => {
-      switch (toolName) {
-        case "candidateScreening":
-          results.screening = this.tools.candidateScreening({ message });
-          break;
-        case "marketAnalysis":
-          results.market = this.tools.marketAnalysis("Software Engineer", "San Francisco");
-          break;
-        case "interviewScheduling":
-          results.scheduling = this.tools.interviewScheduling(5, 3);
-          break;
-        case "budgetPlanning":
-          results.budget = this.tools.budgetPlanning("Software Engineer", 2);
-          break;
-        case "complianceCheck":
-          results.compliance = this.tools.complianceCheck({ message });
-          break;
-      }
-    });
+📊 **Analytics & Optimization**
+- Hiring metrics and KPIs
+- Process improvement recommendations
+- Cost per hire optimization
+- Time-to-fill reduction strategies
 
-    return results;
-  }
-
-  private generateResponse(message: string, toolResults: any, reasoning: string[]): string {
-    let response = "Based on my analysis, here's what I found:\n\n";
-
-    if (toolResults.screening) {
-      response += `📊 **Candidate Analysis:**\n`;
-      response += `- Recommended candidates to review: ${toolResults.screening.recommendedCandidates}\n`;
-      response += `- Top required skills: ${toolResults.screening.topSkills.join(", ")}\n`;
-      response += `- Target experience level: ${toolResults.screening.averageExperience}\n\n`;
-    }
-
-    if (toolResults.market) {
-      response += `💰 **Market Intelligence:**\n`;
-      response += `- Average salary range: ${toolResults.market.averageSalary}\n`;
-      response += `- Competition level: ${toolResults.market.competitionLevel}\n`;
-      response += `- Expected time to hire: ${toolResults.market.timeToHire}\n\n`;
-    }
-
-    if (toolResults.scheduling) {
-      response += `📅 **Interview Planning:**\n`;
-      response += `- Available time slots: ${toolResults.scheduling.suggestedSlots}\n`;
-      response += `- Estimated duration: ${toolResults.scheduling.estimatedDuration}\n`;
-      response += `- Recommended format: ${toolResults.scheduling.recommendedFormat}\n\n`;
-    }
-
-    if (toolResults.budget) {
-      response += `💼 **Budget Projection:**\n`;
-      response += `- Total hiring budget: ${toolResults.budget.totalBudget}\n`;
-      response += `- Recruitment costs: ${toolResults.budget.recruitmentCost}\n`;
-      response += `- Onboarding investment: ${toolResults.budget.onboardingCost}\n\n`;
-    }
-
-    if (toolResults.compliance) {
-      response += `✅ **Compliance & Diversity:**\n`;
-      response += `- EEO Compliance: ${toolResults.compliance.eeoCompliance}\n`;
-      response += `- Diversity Score: ${toolResults.compliance.diversityScore}\n`;
-      response += `- Recommendations: ${toolResults.compliance.recommendations.join(", ")}\n\n`;
-    }
-
-    response += "**Next Steps:**\n";
-    response += "1. Review the analysis above\n";
-    response += "2. Adjust parameters if needed\n";
-    response += "3. Proceed with implementation\n";
-    response += "4. Monitor progress and iterate\n\n";
-    response += "Would you like me to dive deeper into any specific area or help you plan the next phase?";
-
-    return response;
-  }
-
-  getMemory(): Map<string, any> {
-    return this.memory;
-  }
-
-  getConversationHistory(): Array<{role: string, content: string}> {
-    return this.conversationHistory;
+What specific hiring challenge would you like help with today?`;
   }
 }
