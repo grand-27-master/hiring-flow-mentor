@@ -1,4 +1,3 @@
-
 interface AIResponse {
   content: string;
   toolsUsed: string[];
@@ -6,11 +5,24 @@ interface AIResponse {
 }
 
 export class AIAgent {
+  private conversationContext: string[] = [];
+
   async processMessage(message: string): Promise<AIResponse> {
     console.log("Processing user message:", message);
     
-    // Generate direct response based on the message
-    const response = this.generateDirectResponse(message);
+    // Store the user's message for context
+    this.conversationContext.push(`User: ${message}`);
+    
+    // Generate conversational response based on the message
+    const response = this.generateConversationalResponse(message);
+    
+    // Store the AI's response for context
+    this.conversationContext.push(`AI: ${response}`);
+    
+    // Keep only the last 6 messages for context (3 exchanges)
+    if (this.conversationContext.length > 6) {
+      this.conversationContext = this.conversationContext.slice(-6);
+    }
     
     return {
       content: response,
@@ -19,160 +31,99 @@ export class AIAgent {
     };
   }
 
-  private generateDirectResponse(message: string): string {
+  private generateConversationalResponse(message: string): string {
     const lowerMessage = message.toLowerCase();
     
+    // Greeting responses
+    if (lowerMessage.includes("hello") || lowerMessage.includes("hi") || lowerMessage.includes("hey")) {
+      return "Hi there! 👋 I'm here to help with all your hiring needs. What's on your mind today? Are you looking to hire for a specific role, or do you need help with your overall hiring strategy?";
+    }
+
+    // Thank you responses
+    if (lowerMessage.includes("thank") || lowerMessage.includes("thanks")) {
+      return "You're very welcome! Is there anything else I can help you with regarding your hiring process? I'm here whenever you need guidance! 😊";
+    }
+
     // Hiring strategy responses
-    if (lowerMessage.includes("hire") || lowerMessage.includes("recruit")) {
-      return `I can help you with hiring! Here are some key strategies:
+    if (lowerMessage.includes("hire") || lowerMessage.includes("recruit") || lowerMessage.includes("hiring")) {
+      return `Great question about hiring! Let me help you with that. 
 
-🎯 **Hiring Process Steps:**
-1. Define clear job requirements and must-have skills
-2. Choose the right sourcing channels (LinkedIn, Indeed, referrals)
-3. Screen candidates efficiently with structured interviews
-4. Check references and conduct background checks
-5. Make competitive offers quickly
+What type of role are you looking to fill? The approach can vary quite a bit depending on whether you're hiring for:
+• Technical roles (developers, engineers)
+• Sales and marketing positions  
+• Leadership or executive roles
+• Entry-level vs. senior positions
 
-💡 **Best Practices:**
-- Write compelling job descriptions that attract top talent
-- Use a consistent interview process for fair evaluation
-- Focus on cultural fit alongside technical skills
-- Provide a great candidate experience throughout
-
-Would you like me to elaborate on any specific aspect of the hiring process?`;
+Once I know more about the specific role, I can give you much more targeted advice! What's the position you're working on?`;
     }
 
     // Candidate screening responses
-    if (lowerMessage.includes("candidate") || lowerMessage.includes("screen")) {
-      return `For effective candidate screening:
+    if (lowerMessage.includes("candidate") || lowerMessage.includes("screen") || lowerMessage.includes("resume")) {
+      return `Ah, candidate screening - one of the most important parts of the process! 🎯
 
-📋 **Resume Review:**
-- Look for relevant experience and skill matches
-- Check for career progression and stability
-- Note any gaps or red flags that need clarification
+Are you dealing with a lot of applications and need help filtering them down? Or do you have some promising candidates and want to know the best way to evaluate them?
 
-💬 **Phone/Video Screening:**
-- Verify basic qualifications and interest level
-- Assess communication skills and cultural fit
-- Discuss salary expectations and availability
-
-🎯 **Key Questions to Ask:**
-- Why are you interested in this role/company?
-- Walk me through your relevant experience
-- What are your salary expectations?
-- When could you start?
-
-Would you like specific screening questions for a particular role?`;
+A quick question: What's the role you're screening for? The screening approach is quite different for a software engineer versus a sales rep, for example.`;
     }
 
     // Interview process responses
     if (lowerMessage.includes("interview")) {
-      return `Here's how to structure an effective interview process:
+      return `Interviews can make or break a great hire! 💬
 
-🔄 **Multi-Stage Process:**
-1. **Phone Screen** (15-30 min) - Basic fit and interest
-2. **Technical Interview** (45-60 min) - Skills assessment
-3. **Behavioral Interview** (30-45 min) - Culture and soft skills
-4. **Final Round** (30 min) - Leadership/team meet
+Tell me more about where you are in the process:
+• Are you designing the interview structure from scratch?
+• Do you need help with specific interview questions?
+• Are you trying to improve your current interview process?
+• Is this for phone screens, technical interviews, or final rounds?
 
-⭐ **Interview Best Practices:**
-- Prepare structured questions in advance
-- Use the STAR method for behavioral questions
-- Take detailed notes during interviews
-- Involve multiple team members for different perspectives
-- Provide clear next steps and timeline
-
-🎯 **What to Evaluate:**
-- Technical competency for the role
-- Problem-solving approach
-- Communication and collaboration skills
-- Cultural alignment with company values
-
-Need help with specific interview questions for a role?`;
+What's your biggest challenge with interviews right now?`;
     }
 
     // Budget and compensation responses
-    if (lowerMessage.includes("budget") || lowerMessage.includes("salary") || lowerMessage.includes("compensation")) {
-      return `Here's guidance on hiring budgets and compensation:
+    if (lowerMessage.includes("budget") || lowerMessage.includes("salary") || lowerMessage.includes("compensation") || lowerMessage.includes("pay")) {
+      return `Money talk - always a crucial part of hiring! 💰
 
-💰 **Salary Research:**
-- Use sites like Glassdoor, PayScale, and Levels.fyi
-- Consider local market rates vs. remote compensation
-- Factor in experience level and specialization
-- Include total compensation (salary + benefits + equity)
+What specifically are you trying to figure out?
+• Setting a competitive salary range for a role?
+• Your overall hiring budget and costs?
+• How to negotiate offers effectively?
+• Benchmarking against market rates?
 
-📊 **Budget Planning:**
-- Recruitment costs (job postings, agency fees): 15-20% of salary
-- Onboarding and training costs: $3,000-$5,000 per hire
-- Time-to-productivity: 3-6 months depending on role
-- Include buffer for competitive counteroffers
-
-🎯 **Offer Strategy:**
-- Make competitive initial offers to reduce negotiation
-- Be transparent about total compensation package
-- Consider non-monetary benefits (flexible work, growth opportunities)
-- Have approval for 10-15% flexibility in negotiations
-
-What type of role are you budgeting for?`;
+Also, what role/level are we talking about? That makes a huge difference in the numbers!`;
     }
 
     // Market analysis responses
-    if (lowerMessage.includes("market") || lowerMessage.includes("competitive")) {
-      return `Here's how to analyze the current hiring market:
+    if (lowerMessage.includes("market") || lowerMessage.includes("competitive") || lowerMessage.includes("industry")) {
+      return `Market insights coming up! 📊
 
-📈 **Market Research:**
-- Check average time-to-fill for similar roles (typically 30-45 days)
-- Review competitor job postings for salary ranges and requirements
-- Monitor industry reports and salary surveys
-- Track application-to-hire ratios in your sector
+What industry or role are you curious about? The job market varies wildly - tech is still competitive for senior roles, while other sectors have cooled down quite a bit.
 
-🎯 **Competitive Positioning:**
-- Highlight unique company benefits and culture
-- Offer competitive compensation packages
-- Emphasize growth and learning opportunities
-- Showcase interesting projects and technology
+Are you trying to:
+• Understand how long hiring might take?
+• Set competitive compensation?
+• Figure out where to find the best candidates?
+• Beat your competition to top talent?
 
-⚡ **Current Market Trends:**
-- Remote work flexibility is highly valued
-- Candidates prioritize work-life balance
-- Skills-based hiring is increasingly important
-- Faster hiring processes win top talent
-
-🔍 **Red Flags in the Market:**
-- Very low application rates may indicate unrealistic requirements
-- High salary expectations might reflect market inflation
-- Long hiring processes lose candidates to competitors
-
-Which market segment or role type are you most interested in?`;
+Give me some details and I'll share what I know about the current landscape!`;
     }
 
-    // General HR advice
-    return `I'm here to help with your hiring and HR needs! I can assist with:
+    // Follow up questions and engagement
+    if (lowerMessage.includes("yes") || lowerMessage.includes("yeah") || lowerMessage.includes("sure")) {
+      return "Perfect! Tell me more about the specifics so I can give you really targeted advice. What's the situation you're dealing with?";
+    }
 
-🎯 **Hiring Strategy & Planning**
-- Job description writing and role definition
-- Sourcing strategy and channel selection
-- Interview process design
-- Offer strategy and negotiation
+    if (lowerMessage.includes("no") || lowerMessage.includes("not really")) {
+      return "No worries! What would be most helpful for you right now? I can help with hiring strategy, candidate evaluation, interview prep, market insights, or anything else HR-related.";
+    }
 
-👥 **Candidate Management**
-- Resume screening and evaluation
-- Interview question preparation
-- Reference checking best practices
-- Candidate experience optimization
+    // Default conversational response
+    return `That's an interesting question! 🤔
 
-💼 **HR Operations**
-- Onboarding process design
-- Compensation benchmarking
-- Diversity and inclusion strategies
-- Compliance considerations
+I want to make sure I give you the most helpful advice possible. Could you tell me a bit more about:
+• What's your current situation?
+• What specific challenge are you trying to solve?
+• What type of role or company are we talking about?
 
-📊 **Analytics & Optimization**
-- Hiring metrics and KPIs
-- Process improvement recommendations
-- Cost per hire optimization
-- Time-to-fill reduction strategies
-
-What specific hiring challenge would you like help with today?`;
+The more context you give me, the better I can tailor my advice to your exact needs!`;
   }
 }
