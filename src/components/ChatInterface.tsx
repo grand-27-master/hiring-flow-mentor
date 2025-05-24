@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { AIAgent } from "@/lib/aiAgent";
-import { User, Users } from "lucide-react";
+import { User, Bot, Send, Sparkles } from "lucide-react";
 
 interface Message {
   id: string;
@@ -104,48 +104,83 @@ export const ChatInterface = () => {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-t-lg">
-        <CardTitle className="flex items-center space-x-2">
-          <Users className="w-5 h-5" />
-          <span>AI HR Assistant Chat</span>
-        </CardTitle>
-        <CardDescription className="text-purple-100">
-          Get direct answers and guidance for your hiring needs
-        </CardDescription>
+    <Card className="h-[700px] flex flex-col shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+      <CardHeader className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white rounded-t-lg relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10">
+          <CardTitle className="flex items-center space-x-3 text-xl">
+            <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <span className="font-semibold">AI HR Assistant</span>
+          </CardTitle>
+          <CardDescription className="text-indigo-100 mt-2">
+            Your intelligent partner for streamlined hiring and recruitment
+          </CardDescription>
+        </div>
       </CardHeader>
       
-      <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-          <div className="space-y-4">
+      <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-gray-50 to-white">
+        <ScrollArea className="flex-1 p-6" ref={scrollRef}>
+          <div className="space-y-6">
             {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] ${message.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-100"} rounded-lg p-4`}>
-                  <div className="flex items-center space-x-2 mb-2">
-                    {message.sender === "user" ? (
-                      <User className="w-4 h-4" />
-                    ) : (
-                      <Users className="w-4 h-4" />
-                    )}
-                    <span className="font-medium">
-                      {message.sender === "user" ? "You" : "AI Assistant"}
-                    </span>
-                    <span className="text-xs opacity-70">
-                      {message.timestamp.toLocaleTimeString()}
-                    </span>
+              <div key={message.id} className={`flex items-start space-x-3 ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
+                {/* Avatar */}
+                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                  message.sender === "user" 
+                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white" 
+                    : "bg-gradient-to-br from-purple-500 to-indigo-600 text-white"
+                }`}>
+                  {message.sender === "user" ? (
+                    <User className="w-5 h-5" />
+                  ) : (
+                    <Bot className="w-5 h-5" />
+                  )}
+                </div>
+
+                {/* Message Content */}
+                <div className={`flex-1 max-w-[85%] ${message.sender === "user" ? "flex flex-col items-end" : ""}`}>
+                  <div className={`rounded-2xl px-4 py-3 shadow-sm ${
+                    message.sender === "user" 
+                      ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white ml-4" 
+                      : "bg-white border border-gray-200 mr-4"
+                  }`}>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className={`text-sm font-medium ${
+                        message.sender === "user" ? "text-blue-100" : "text-gray-600"
+                      }`}>
+                        {message.sender === "user" ? "You" : "AI Assistant"}
+                      </span>
+                      <span className={`text-xs ${
+                        message.sender === "user" ? "text-blue-200" : "text-gray-400"
+                      }`}>
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    
+                    <p className={`whitespace-pre-wrap leading-relaxed ${
+                      message.sender === "user" ? "text-white" : "text-gray-800"
+                    }`}>
+                      {message.content}
+                    </p>
                   </div>
-                  
-                  <p className="whitespace-pre-wrap">{message.content}</p>
                 </div>
               </div>
             ))}
             
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-lg p-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full"></div>
-                    <span>AI Assistant is thinking...</span>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm mr-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                    <span className="text-gray-600 text-sm">AI is thinking...</span>
                   </div>
                 </div>
               </div>
@@ -153,26 +188,31 @@ export const ChatInterface = () => {
           </div>
         </ScrollArea>
         
-        <Separator />
+        <Separator className="bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
         
-        <div className="p-4">
-          <div className="flex space-x-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask about hiring strategies, candidate analysis, or scheduling..."
-              className="flex-1"
-              disabled={isLoading}
-            />
+        <div className="p-6 bg-white">
+          <div className="flex items-center space-x-3">
+            <div className="flex-1 relative">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask about hiring strategies, candidate analysis, scheduling..."
+                className="pr-12 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+                disabled={isLoading}
+              />
+            </div>
             <Button 
               onClick={handleSendMessage}
               disabled={isLoading || !input.trim()}
-              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+              className="h-12 px-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
             >
-              Send
+              <Send className="w-5 h-5" />
             </Button>
           </div>
+          <p className="text-xs text-gray-500 mt-3 text-center">
+            Press Enter to send • Get instant HR guidance and hiring insights
+          </p>
         </div>
       </CardContent>
     </Card>
