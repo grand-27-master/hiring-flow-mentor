@@ -2,16 +2,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-
-const hiringData = [
-  { month: "Jan", hires: 12, budget: 85000 },
-  { month: "Feb", hires: 8, budget: 92000 },
-  { month: "Mar", hires: 15, budget: 78000 },
-  { month: "Apr", hires: 10, budget: 88000 },
-  { month: "May", hires: 18, budget: 72000 },
-  { month: "Jun", hires: 14, budget: 95000 },
-];
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useHiringStats } from "@/contexts/HiringStatsContext";
 
 const sourceData = [
   { name: "LinkedIn", value: 35, color: "#0077b5" },
@@ -22,20 +14,22 @@ const sourceData = [
 ];
 
 export const AnalyticsDashboard = () => {
+  const { stats } = useHiringStats();
+
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold text-blue-700">127</CardTitle>
+            <CardTitle className="text-2xl font-bold text-blue-700">{stats.totalHires}</CardTitle>
             <CardDescription>Total Hires YTD</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <Progress value={68} className="flex-1" />
+              <Progress value={stats.totalHires > 0 ? Math.min(stats.totalHires * 10, 100) : 0} className="flex-1" />
               <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                +12%
+                {stats.totalHires > 0 ? "+100%" : "0%"}
               </Badge>
             </div>
           </CardContent>
@@ -43,14 +37,14 @@ export const AnalyticsDashboard = () => {
 
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold text-green-700">23</CardTitle>
+            <CardTitle className="text-2xl font-bold text-green-700">{stats.avgDaysToHire}</CardTitle>
             <CardDescription>Avg. Days to Hire</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <Progress value={82} className="flex-1" />
+              <Progress value={stats.avgDaysToHire > 0 ? Math.max(100 - stats.avgDaysToHire * 2, 0) : 0} className="flex-1" />
               <Badge variant="secondary" className="bg-green-100 text-green-700">
-                -3 days
+                {stats.avgDaysToHire > 0 ? "Tracking" : "N/A"}
               </Badge>
             </div>
           </CardContent>
@@ -58,14 +52,16 @@ export const AnalyticsDashboard = () => {
 
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold text-purple-700">$89K</CardTitle>
+            <CardTitle className="text-2xl font-bold text-purple-700">
+              ${stats.avgCostPerHire > 0 ? `${Math.round(stats.avgCostPerHire/1000)}K` : '0'}
+            </CardTitle>
             <CardDescription>Avg. Cost per Hire</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <Progress value={56} className="flex-1" />
+              <Progress value={stats.avgCostPerHire > 0 ? 50 : 0} className="flex-1" />
               <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-                -8%
+                {stats.avgCostPerHire > 0 ? "Optimizing" : "N/A"}
               </Badge>
             </div>
           </CardContent>
@@ -73,14 +69,14 @@ export const AnalyticsDashboard = () => {
 
         <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl font-bold text-orange-700">91%</CardTitle>
+            <CardTitle className="text-2xl font-bold text-orange-700">{stats.retentionRate}%</CardTitle>
             <CardDescription>Retention Rate</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <Progress value={91} className="flex-1" />
+              <Progress value={stats.retentionRate} className="flex-1" />
               <Badge variant="secondary" className="bg-orange-100 text-orange-700">
-                +4%
+                Good
               </Badge>
             </div>
           </CardContent>
@@ -96,7 +92,7 @@ export const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={hiringData}>
+              <BarChart data={stats.monthlyData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
@@ -146,26 +142,34 @@ export const AnalyticsDashboard = () => {
           <CardDescription>Data-driven recommendations from your AI agent</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-white rounded-lg border border-indigo-200">
-            <h4 className="font-semibold text-indigo-700 mb-2">🎯 Optimization Opportunity</h4>
-            <p className="text-sm text-gray-600">
-              LinkedIn referrals show 40% higher retention rates. Consider increasing LinkedIn recruitment budget by 15%.
-            </p>
-          </div>
-          
-          <div className="p-4 bg-white rounded-lg border border-purple-200">
-            <h4 className="font-semibold text-purple-700 mb-2">⚡ Process Improvement</h4>
-            <p className="text-sm text-gray-600">
-              Interview scheduling is your biggest bottleneck. Implementing automated scheduling could reduce time-to-hire by 5-7 days.
-            </p>
-          </div>
-          
-          <div className="p-4 bg-white rounded-lg border border-green-200">
-            <h4 className="font-semibold text-green-700 mb-2">💡 Trend Alert</h4>
-            <p className="text-sm text-gray-600">
-              May showed optimal cost-per-hire. The strategies used in May should be replicated in upcoming quarters.
-            </p>
-          </div>
+          {stats.totalHires === 0 && stats.activeCandidates === 0 ? (
+            <div className="p-4 bg-white rounded-lg border border-indigo-200">
+              <h4 className="font-semibold text-indigo-700 mb-2">🚀 Ready to Start</h4>
+              <p className="text-sm text-gray-600">
+                No hiring data yet. Start chatting with the AI assistant to begin tracking your hiring metrics and get personalized insights.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="p-4 bg-white rounded-lg border border-indigo-200">
+                <h4 className="font-semibold text-indigo-700 mb-2">📊 Current Progress</h4>
+                <p className="text-sm text-gray-600">
+                  You have {stats.activeCandidates} candidates in your pipeline and {stats.totalHires} completed hires. 
+                  Keep building your pipeline for better insights.
+                </p>
+              </div>
+              
+              {stats.activeCandidates > 5 && (
+                <div className="p-4 bg-white rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-700 mb-2">💡 Pipeline Health</h4>
+                  <p className="text-sm text-gray-600">
+                    Great job! Your pipeline is active with {stats.activeCandidates} candidates. 
+                    This is a healthy pipeline size for efficient hiring.
+                  </p>
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

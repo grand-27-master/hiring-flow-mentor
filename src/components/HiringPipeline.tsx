@@ -4,77 +4,46 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-
-const pipelineStages = [
-  {
-    name: "Application Review",
-    candidates: 45,
-    status: "active",
-    color: "bg-blue-500",
-    percentage: 100
-  },
-  {
-    name: "Phone Screening",
-    candidates: 18,
-    status: "active",
-    color: "bg-purple-500",
-    percentage: 40
-  },
-  {
-    name: "Technical Interview",
-    candidates: 12,
-    status: "active",
-    color: "bg-indigo-500",
-    percentage: 27
-  },
-  {
-    name: "Final Interview",
-    candidates: 6,
-    status: "pending",
-    color: "bg-orange-500",
-    percentage: 13
-  },
-  {
-    name: "Offer Stage",
-    candidates: 3,
-    status: "pending",
-    color: "bg-green-500",
-    percentage: 7
-  }
-];
+import { useHiringStats } from "@/contexts/HiringStatsContext";
 
 const currentOpenings = [
   {
     title: "Senior Frontend Developer",
     department: "Engineering",
     urgency: "High",
-    applicants: 28,
-    stage: "Technical Interview"
+    applicants: 0,
+    stage: "Not Started"
   },
   {
     title: "Product Manager",
     department: "Product",
     urgency: "Medium",
-    applicants: 15,
-    stage: "Final Interview"
+    applicants: 0,
+    stage: "Not Started"
   },
   {
     title: "UX Designer",
     department: "Design",
     urgency: "Low",
-    applicants: 12,
-    stage: "Phone Screening"
+    applicants: 0,
+    stage: "Not Started"
   },
   {
     title: "DevOps Engineer",
     department: "Engineering",
     urgency: "High",
-    applicants: 8,
-    stage: "Application Review"
+    applicants: 0,
+    stage: "Not Started"
   }
 ];
 
 export const HiringPipeline = () => {
+  const { stats, addCandidateToStage } = useHiringStats();
+
+  const handleAddCandidate = (stageName: string) => {
+    addCandidateToStage(stageName);
+  };
+
   return (
     <div className="space-y-6">
       {/* Pipeline Overview */}
@@ -85,7 +54,7 @@ export const HiringPipeline = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {pipelineStages.map((stage, index) => (
+            {stats.pipelineStages.map((stage, index) => (
               <div key={stage.name} className="flex items-center space-x-4">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
@@ -95,6 +64,13 @@ export const HiringPipeline = () => {
                         {stage.candidates} candidates
                       </Badge>
                       <span className="text-sm text-gray-500">{stage.percentage}%</span>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleAddCandidate(stage.name)}
+                      >
+                        Add +1
+                      </Button>
                     </div>
                   </div>
                   <Progress value={stage.percentage} className="h-3" />
@@ -128,7 +104,7 @@ export const HiringPipeline = () => {
                       </Badge>
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>{opening.applicants} applicants</span>
+                      <span>{stats.activeCandidates} total candidates in pipeline</span>
                       <span>•</span>
                       <span>Current stage: {opening.stage}</span>
                     </div>
@@ -151,35 +127,30 @@ export const HiringPipeline = () => {
             <span>🎯</span>
             <span>AI Pipeline Optimization</span>
           </CardTitle>
-          <CardDescription>Smart recommendations to improve your hiring process</CardDescription>
+          <CardDescription>Smart recommendations based on current activity</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-white rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-blue-700 mb-2">⚡ Bottleneck Alert</h4>
-            <p className="text-sm text-gray-600 mb-3">
-              Technical Interview stage has a 67% conversion rate, which is below the 75% benchmark. 
-              Consider adjusting the technical assessment difficulty or providing better preparation materials.
-            </p>
-            <Button size="sm" variant="outline">Apply Suggestion</Button>
-          </div>
-          
-          <div className="p-4 bg-white rounded-lg border border-purple-200">
-            <h4 className="font-semibold text-purple-700 mb-2">📊 Performance Insight</h4>
-            <p className="text-sm text-gray-600 mb-3">
-              Senior Frontend Developer position is moving 30% faster than average. 
-              The screening criteria and process should be replicated for similar roles.
-            </p>
-            <Button size="sm" variant="outline">View Details</Button>
-          </div>
-          
-          <div className="p-4 bg-white rounded-lg border border-green-200">
-            <h4 className="font-semibold text-green-700 mb-2">🚀 Automation Opportunity</h4>
-            <p className="text-sm text-gray-600 mb-3">
-              Phone screening can be partially automated using AI-powered pre-screening calls, 
-              potentially reducing time-to-hire by 3-4 days.
-            </p>
-            <Button size="sm" variant="outline">Learn More</Button>
-          </div>
+          {stats.activeCandidates === 0 ? (
+            <div className="p-4 bg-white rounded-lg border border-gray-200">
+              <h4 className="font-semibold text-gray-700 mb-2">🚀 Get Started</h4>
+              <p className="text-sm text-gray-600 mb-3">
+                No candidates in the pipeline yet. Start by discussing your hiring needs with the AI assistant 
+                to get personalized recommendations and begin building your candidate pipeline.
+              </p>
+              <Button size="sm" variant="outline">Start Hiring Process</Button>
+            </div>
+          ) : (
+            <>
+              <div className="p-4 bg-white rounded-lg border border-blue-200">
+                <h4 className="font-semibold text-blue-700 mb-2">⚡ Current Status</h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  You have {stats.activeCandidates} candidates in your pipeline. Great start! 
+                  Continue the conversation with AI to optimize your hiring process.
+                </p>
+                <Button size="sm" variant="outline">View Insights</Button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

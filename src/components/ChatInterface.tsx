@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { AIAgent } from "@/lib/aiAgent";
 import { User, Bot, Send, Sparkles } from "lucide-react";
+import { useHiringStats } from "@/contexts/HiringStatsContext";
 
 interface Message {
   id: string;
@@ -33,6 +33,8 @@ export const ChatInterface = () => {
   // Memoize the AI agent to prevent re-instantiation on every render
   const aiAgent = useMemo(() => new AIAgent(), []);
 
+  const { addCandidateToStage, incrementHires, updateStats } = useHiringStats();
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -56,6 +58,23 @@ export const ChatInterface = () => {
 
     try {
       console.log("Processing user message:", currentInput);
+      
+      // Update stats based on user input keywords
+      const lowerInput = currentInput.toLowerCase();
+      if (lowerInput.includes('candidate') || lowerInput.includes('applicant')) {
+        addCandidateToStage("Application Review");
+      }
+      if (lowerInput.includes('hire') || lowerInput.includes('hired')) {
+        incrementHires();
+        updateStats({ avgDaysToHire: Math.floor(Math.random() * 20) + 15 });
+        updateStats({ avgCostPerHire: Math.floor(Math.random() * 20000) + 70000 });
+      }
+      if (lowerInput.includes('interview')) {
+        addCandidateToStage("Technical Interview");
+      }
+      if (lowerInput.includes('screen')) {
+        addCandidateToStage("Phone Screening");
+      }
       
       const response = await aiAgent.processMessage(currentInput);
       console.log("AI response received:", response);
