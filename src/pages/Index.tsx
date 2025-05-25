@@ -18,7 +18,7 @@ const Index = () => {
   
   return (
     <HiringStatsProvider>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 font-inter">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 font-kalam">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 shadow-lg">
           <div className="max-w-7xl mx-auto">

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,8 +19,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'inter': ['Inter', 'sans-serif'],
-				'sans': ['Inter', 'sans-serif'],
+				'kalam': ['Kalam', 'cursive'],
+				'sans': ['Kalam', 'cursive'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
