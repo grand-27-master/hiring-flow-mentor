@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { AIAgent } from "@/lib/aiAgent";
-import { User, Bot, Send, Sparkles } from "lucide-react";
+import { User, Bot, Send, Sparkles, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useHiringStats } from "@/contexts/HiringStatsContext";
 
 interface Message {
@@ -40,6 +40,14 @@ export const ChatInterface = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: "Message copied to clipboard",
+    });
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -123,7 +131,7 @@ export const ChatInterface = () => {
   };
 
   return (
-    <Card className="h-[700px] flex flex-col shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+    <Card className="h-[700px] flex flex-col shadow-xl border-0 bg-white/90 backdrop-blur-sm">
       <CardHeader className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white rounded-t-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
@@ -141,58 +149,89 @@ export const ChatInterface = () => {
       
       <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-gray-50 to-white">
         <ScrollArea className="flex-1 p-6" ref={scrollRef}>
-          <div className="space-y-6">
+          <div className="space-y-8">
             {messages.map((message) => (
-              <div key={message.id} className={`flex items-start space-x-3 ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
-                {/* Avatar */}
-                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+              <div key={message.id} className={`flex items-start space-x-4 ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
+                {/* Enhanced Avatar */}
+                <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${
                   message.sender === "user" 
-                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white" 
-                    : "bg-gradient-to-br from-purple-500 to-indigo-600 text-white"
+                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white ring-2 ring-blue-200" 
+                    : "bg-gradient-to-br from-purple-500 to-indigo-600 text-white ring-2 ring-purple-200"
                 }`}>
                   {message.sender === "user" ? (
-                    <User className="w-5 h-5" />
+                    <User className="w-6 h-6" />
                   ) : (
-                    <Bot className="w-5 h-5" />
+                    <Bot className="w-6 h-6" />
                   )}
                 </div>
 
-                {/* Message Content */}
-                <div className={`flex-1 max-w-[85%] ${message.sender === "user" ? "flex flex-col items-end" : ""}`}>
-                  <div className={`rounded-2xl px-4 py-3 shadow-sm ${
+                {/* Enhanced Message Content */}
+                <div className={`flex-1 max-w-[80%] ${message.sender === "user" ? "flex flex-col items-end" : ""}`}>
+                  {/* Message Header */}
+                  <div className={`flex items-center space-x-2 mb-2 ${message.sender === "user" ? "justify-end" : ""}`}>
+                    <span className="text-sm font-semibold text-gray-700">
+                      {message.sender === "user" ? "You" : "AI Assistant"}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  
+                  {/* Message Bubble */}
+                  <div className={`group relative rounded-2xl px-6 py-4 shadow-md transition-all duration-200 hover:shadow-lg ${
                     message.sender === "user" 
                       ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white ml-4" 
-                      : "bg-white border border-gray-200 mr-4"
+                      : "bg-white border border-gray-200 mr-4 hover:border-gray-300"
                   }`}>
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className={`text-sm font-medium ${
-                        message.sender === "user" ? "text-blue-100" : "text-gray-600"
-                      }`}>
-                        {message.sender === "user" ? "You" : "AI Assistant"}
-                      </span>
-                      <span className={`text-xs ${
-                        message.sender === "user" ? "text-blue-200" : "text-gray-400"
-                      }`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                    
-                    <p className={`whitespace-pre-wrap leading-relaxed ${
+                    {/* Message Text */}
+                    <p className={`whitespace-pre-wrap leading-relaxed text-sm ${
                       message.sender === "user" ? "text-white" : "text-gray-800"
                     }`}>
                       {message.content}
                     </p>
+                    
+                    {/* AI Message Actions */}
+                    {message.sender === "ai" && (
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(message.content)}
+                            className="h-8 px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-2 text-gray-500 hover:text-green-600 hover:bg-green-50"
+                          >
+                            <ThumbsUp className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-2 text-gray-500 hover:text-red-600 hover:bg-red-50"
+                          >
+                            <ThumbsDown className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <span className="text-xs text-gray-400 font-mono">AI Response</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             ))}
             
+            {/* Enhanced Loading State */}
             {isLoading && (
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center">
-                  <Bot className="w-5 h-5" />
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-lg ring-2 ring-purple-200">
+                  <Bot className="w-6 h-6" />
                 </div>
-                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm mr-4">
+                <div className="bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-md mr-4">
                   <div className="flex items-center space-x-3">
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
@@ -209,7 +248,8 @@ export const ChatInterface = () => {
         
         <Separator className="bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
         
-        <div className="p-6 bg-white">
+        {/* Enhanced Input Area */}
+        <div className="p-6 bg-white/80 backdrop-blur-sm">
           <div className="flex items-center space-x-3">
             <div className="flex-1 relative">
               <Input
@@ -217,7 +257,7 @@ export const ChatInterface = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask about hiring strategies, candidate analysis, scheduling..."
-                className="pr-12 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+                className="pr-12 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200 text-sm"
                 disabled={isLoading}
               />
             </div>
