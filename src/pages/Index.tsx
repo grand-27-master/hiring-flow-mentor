@@ -18,7 +18,7 @@ const Index = () => {
   
   return (
     <HiringStatsProvider>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 font-inter">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 shadow-lg">
           <div className="max-w-7xl mx-auto">
@@ -33,9 +33,6 @@ const Index = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                  AI Agent Active
-                </Badge>
                 <Avatar>
                   <AvatarFallback className="bg-white/20 text-white">HR</AvatarFallback>
                 </Avatar>
