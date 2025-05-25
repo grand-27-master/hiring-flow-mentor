@@ -19,8 +19,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'kalam': ['Kalam', 'cursive'],
-				'sans': ['Kalam', 'cursive'],
+				'mono': ['JetBrains Mono', 'monospace'],
+				'sans': ['JetBrains Mono', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
